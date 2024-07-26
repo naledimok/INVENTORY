@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Inventory</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <style>
+        .low-stock {
+            color: red;
+            font-weight: bold;
+        }
+        .saved-message {
+            display: none;
+            color: green;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .saved-message.visible {
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Update Inventory</h1>
+    <form method="post" action="{% url 'save_updated_inventory' %}">
+        {% csrf_token %}
+        <table class="inventory-table">
+            <thead>
+                <tr>
+                    <th>Item ID</th>
+                    <th>Item Name</th>
+                    <th>Category</th>
+                    <th>Supplier</th>
+                    <th>Quantity in Stock</th>
+                    <th>New Quantity</th>
+                    <th>Low Stock Warning</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.item_id }}</td>
+                    <td>{{ item.item_name }}</td>
+                    <td>{{ item.category }}</td>
+                    <td>{{ item.supplier }}</td>
+                    <td>{{ item.quantity_in_stock }}</td>
+                    <td>
+                        <input type="number" name="new_quantity_{{ item.item_id }}" value="{{ item.quantity_in_stock }}">
+                    </td>
+                    <td class="{% if item.quantity_in_stock <= 2 %}low-stock{% endif %}">
+                        {% if item.quantity_in_stock <= 2 %}Low Stock{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit">Update Inventory</button>
+    </form>
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div>
+        <a href="{% url 'used_stock_pdf' %}" class="btn btn-primary">Download Used Stock as PDF</a>
+        <br>
+        <a href="{% url 'delete_all_used' %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete the used stock table?');">Delete All</a>
+    </div>
+    <h2>Used Stock</h2>
+    <table class="inventory-table">
+        <thead>
+            <tr>
+                <th>Item ID</th>
+                <th>Item Name</th>
+                <th>Quantity Used</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for used in used_stocks %}
+            <tr>
+                <td>{{ used.item.item_id }}</td>
+                <td>{{ used.item.item_name }}</td>
+                <td>{{ used.quantity_used }}</td>
+                <td>{{ used.date }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <script src="{% static 'js/script.js' %}"></script>
+    <script>
+        document.getElementById('update-inventory-form').onsubmit = function() {
+            setTimeout(function() {
+                document.getElementById('saved-message').classList.add('visible');
+            }, 100);  // Delay to wait for form submission
+        };
+    </script>
+</body>
+</html>
