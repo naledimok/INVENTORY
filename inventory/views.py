@@ -138,7 +138,7 @@ def inventory_pdf(request):
     buffer.seek(0)
     return HttpResponse(buffer, content_type='application/pdf')
 
-def delete_all():
+def delete_all(request):
     InventoryItem.objects.all().delete()
     return redirect('inventory_list')
 
@@ -187,6 +187,6 @@ def used_stock_pdf(request):
     buffer.seek(0)
     return HttpResponse(buffer, content_type='application/pdf')
 
-def delete_all_used():
+def delete_all_used(request):
     UsedStock.objects.all().delete()
     return redirect('update_inventory/')
